@@ -40,16 +40,16 @@ class TimeCheck:
         else:
             return True
 
-    def check(self):
+    def check_or_error(self):
         
         if not(self.check_if_time_is_valid_or_false( self.time ) and self.check_if_time_is_valid_or_false(self.duration)):
-            return False
+            raise ValueError("It needs to be split by 15 minutes")
         elif not(self.check_if_duration_valid_or_false()):
-            return False
+            raise ValueError("End time is earlier than start time")
         elif not(self.check_if_time_is_taken_or_false()):
-            return False
+            raise ValueError("Time period is already taken")
         elif not(self.check_if_time_is_current()):
-            return False
+            raise ValueError("Time period is in past")
         else:
             return True
 

@@ -48,9 +48,13 @@ def get_events(start_time: datetime, end_time:datetime):
 @app.post("/api/events/", status_code=201)
 def create_event(user_id:int, time:datetime, name:str, comment:str, alert:bool, duration:datetime):
 
-    if not(TimeCheck(time, duration, session).check()):
-        raise ValueError
-    
+    try:
+        TimeCheck(time, duration, session).check_or_error()
+    except ValueError as e:
+        return HTTPException(status_code=412, detail=f"Given time is incorrect. {str(e)}")
+    except Exception:
+        return HTTPException(status_code=500, detail="Server Error")
+
     temp_event = models.Event(
         user_id = user_id,
         time = time,
@@ -59,9 +63,11 @@ def create_event(user_id:int, time:datetime, name:str, comment:str, alert:bool, 
         alert = alert,
         duration = duration
     )
+
     session.add(
         temp_event
     )
+
     session.commit()
     return temp_event
 
