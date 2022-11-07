@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from database import connection, models
 from datetime import datetime
 from business_logic import TimeCheck
+import time
 
 app = FastAPI()
 db = connection.DbConection()
@@ -15,11 +16,11 @@ async def check_pass(request, call_next):
     return response
 
 @app.get("/api/users/", status_code=200)
-async def all_users():
+def all_users():
     return session.query(models.User).filter_by(public=True).all()
 
 @app.post("/api/users/", status_code=201)
-async def create_user(name:str, login:str, public:bool, description:str, password:str, age:int, telegram_id:str):
+def create_user(name:str, login:str, public:bool, description:str, password:str, age:int, telegram_id:str):
     temp_user = models.User(
         name = name,
         age = age,
@@ -36,16 +37,16 @@ async def create_user(name:str, login:str, public:bool, description:str, passwor
     return temp_user
 
 @app.post("/api/users/auth/", status_code=200)
-async def check_auth(login:str, password:str):
+def check_auth(login:str, password:str):
     temp_user = session.query(models.User).filter_by(login=login).first()
     return temp_user.check_password(password)
 
 @app.get("/api/events/", status_code=200)
-async def get_events(start_time: datetime, end_time:datetime):
+def get_events(start_time: datetime, end_time:datetime):
     return 0
 
 @app.post("/api/events/", status_code=201)
-async def create_event(user_id:int, time:datetime, name:str, comment:str, alert:bool, duration:datetime):
+def create_event(user_id:int, time:datetime, name:str, comment:str, alert:bool, duration:datetime):
 
     if not(TimeCheck(time, duration, session).check()):
         raise ValueError
