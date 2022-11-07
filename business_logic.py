@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from .models import *
+from database import models
 from sqlalchemy import and_
 import pytz
 
@@ -26,7 +26,7 @@ class TimeCheck:
             return False
 
     def check_if_time_is_taken_or_false(self):
-        taken_time = self.session.query(Event).filter( and_(Event.time >= self.time, Event.duration <= self.duration) ).count()
+        taken_time = self.session.query(models.Event).filter( and_(models.Event.time >= self.time, models.Event.duration <= self.duration) ).count()
         if (taken_time > 0):
             return False
         else:
@@ -41,7 +41,7 @@ class TimeCheck:
             return True
 
     def check(self):
-        self.check_if_time_is_current()
+        
         if not(self.check_if_time_is_valid_or_false( self.time ) and self.check_if_time_is_valid_or_false(self.duration)):
             return False
         elif not(self.check_if_duration_valid_or_false()):
