@@ -40,7 +40,7 @@ class TimeCheck:
         else:
             return True
 
-    def check_or_error(self):
+    def create_check_or_error(self):
         
         if not(self.check_if_time_is_valid_or_false( self.time ) and self.check_if_time_is_valid_or_false(self.duration)):
             raise ValueError("It needs to be split by 15 minutes")
@@ -52,5 +52,6 @@ class TimeCheck:
             raise ValueError("Time period is in past")
         else:
             return True
+
 
         

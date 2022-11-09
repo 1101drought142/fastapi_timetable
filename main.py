@@ -50,7 +50,7 @@ def get_events(start_time: datetime, end_time:datetime, user_id:int, public:bool
 def create_event(user_id:int, time:datetime, name:str, comment:str, alert:bool, duration:datetime):
 
     try:
-        TimeCheck(time, duration, session).check_or_error()
+        TimeCheck(time, duration, session).create_check_or_error()
     except ValueError as e:
         return HTTPException(status_code=412, detail=f"Given time is incorrect. {str(e)}")
     except Exception:
