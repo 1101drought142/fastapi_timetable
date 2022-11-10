@@ -2,7 +2,8 @@ from fastapi import FastAPI, HTTPException
 from database import connection, models
 from datetime import datetime
 from sqlalchemy import and_
-from business_logic import TimeCheck
+from .business_logic import TimeCheck
+
 
 app = FastAPI()
 db = connection.DbConection()
@@ -73,7 +74,7 @@ def create_event(user_id:int, time:datetime, name:str, comment:str, alert:bool, 
     return temp_event
 
 @app.delete("/api/events/")
-async def delete_event(event_id:int):
+def delete_event(event_id:int):
     deleted_event = session.query(models.Event).get(event_id)
     if deleted_event:
         session.delete(deleted_event)

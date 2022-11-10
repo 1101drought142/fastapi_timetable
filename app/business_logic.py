@@ -52,6 +52,3 @@ class TimeCheck:
             raise ValueError("Time period is in past")
         else:
             return True
-
-
-        
