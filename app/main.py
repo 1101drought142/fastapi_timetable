@@ -11,7 +11,8 @@ ALGORITH = "HS256"
 app = FastAPI()
 db = connection.DbConection()
 session = db.get_session()()
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/token/")
 
 @app.middleware("http")
 async def check_pass(request, call_next):
@@ -22,8 +23,11 @@ async def check_pass(request, call_next):
 
 @app.get("/api/users/", status_code=200)
 def all_users(token: str = Depends(oauth2_scheme)):
-    print(token)
-    return session.query(models.User).filter_by(public=True).all()
+
+    if (token):
+        return session.query(models.User).filter_by(public=True).all()
+    else:
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
 
 @app.post("/api/users/", status_code=201)
 def create_user(name:str, login:str, public:bool, description:str, password:str, age:int, telegram_id:str):
@@ -42,7 +46,7 @@ def create_user(name:str, login:str, public:bool, description:str, password:str,
     session.commit()
     return temp_user
 
-@app.post("/token", status_code=200)
+@app.post("/api/token/", status_code=200)
 def check_auth(form_data: OAuth2PasswordRequestForm = Depends()):
 
     temp_user = session.query(models.User).filter_by(login=form_data.username).first()

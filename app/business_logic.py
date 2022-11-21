@@ -52,3 +52,14 @@ class TimeCheck:
             raise ValueError("Time period is in past")
         else:
             return True
+
+
+class Auth():
+
+    def create_token():
+        pass
+
+    def verify_token():
+        pass
+
+    
