@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException, Depends
 from database import connection, models
 from datetime import datetime
 from sqlalchemy import and_
-from .business_logic import TimeCheck
+from .business_logic import TimeCheck, Auth
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 app = FastAPI()
@@ -21,7 +21,7 @@ async def check_pass(request, call_next):
 @app.get("/api/users/", status_code=200)
 def all_users(token: str = Depends(oauth2_scheme)):
 
-    if (token):
+    if (Auth.verify_token(token)):
         return session.query(models.User).filter_by(public=True).all()
     else:
         raise HTTPException(status_code=400, detail="Incorrect username or password")
@@ -52,7 +52,7 @@ def check_auth(form_data: OAuth2PasswordRequestForm = Depends()):
     elif not(temp_user.check_password(form_data.password)):
         raise HTTPException(status_code=400, detail="Incorrect username or password")
     else:
-        return {"access_token": temp_user.login, "token_type": "bearer"}
+        return {"access_token": Auth.create_token(temp_user.login), "token_type": "bearer"}
 
 @app.get("/api/events/", status_code=200)
 def get_events(start_time: datetime, end_time:datetime, user_id:int, public:bool):

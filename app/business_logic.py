@@ -2,6 +2,8 @@ from datetime import datetime, timedelta
 from database import models
 from sqlalchemy import and_
 import pytz
+import redis
+from .common_logic import generate_random_string
 
 SECRET_KEY = ""
 ALGORITH = "HS256"
@@ -57,12 +59,28 @@ class TimeCheck:
             return True
 
 
+
 class Auth():
 
-    def create_token():
+    #jwt tokens
+    def create_roken():
         pass
+    
+    def verify_tokens():
+        pass
+    
+    # idea to try, token in redis
+    """
+    r = redis.Redis(host='localhost', port=6379, db=0)    
+    def create_token(login : str):
+        temp_random_string = generate_random_string()
+        if (r.set(temp_random_string, login)):
+            return temp_random_string
 
-    def verify_token():
-        pass
+    def verify_token(token):
+        temp_login = r.get(token)
+        if (temp_login):
+            return temp_login"""
+
 
     
