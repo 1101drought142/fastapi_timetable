@@ -5,9 +5,6 @@ from sqlalchemy import and_
 from .business_logic import TimeCheck
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
-SECRET_KEY = ""
-ALGORITH = "HS256"
-
 app = FastAPI()
 db = connection.DbConection()
 session = db.get_session()()

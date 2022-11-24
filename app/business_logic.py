@@ -3,6 +3,9 @@ from database import models
 from sqlalchemy import and_
 import pytz
 
+SECRET_KEY = ""
+ALGORITH = "HS256"
+
 class TimeCheck:
 
     def __init__(self, time, duration, session):
