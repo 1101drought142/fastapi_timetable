@@ -19,12 +19,8 @@ async def check_pass(request, call_next):
     return response
 
 @app.get("/api/users/", status_code=200)
-def all_users(token: str = Depends(oauth2_scheme)):
-
-    if (Auth.verify_token(token)):
-        return session.query(models.User).filter_by(public=True).all()
-    else:
-        raise HTTPException(status_code=400, detail="Incorrect username or password")
+def all_users():
+    return session.query(models.User).filter_by(public=True).all()
 
 @app.post("/api/users/", status_code=201)
 def create_user(name:str, login:str, public:bool, description:str, password:str, age:int, telegram_id:str):
@@ -52,7 +48,7 @@ def check_auth(form_data: OAuth2PasswordRequestForm = Depends()):
     elif not(temp_user.check_password(form_data.password)):
         raise HTTPException(status_code=400, detail="Incorrect username or password")
     else:
-        return {"access_token": Auth.create_token(temp_user.login), "token_type": "bearer"}
+        return {"access_token": Auth(session).create_token(temp_user.login), "token_type": "bearer"}
 
 @app.get("/api/events/", status_code=200)
 def get_events(start_time: datetime, end_time:datetime, user_id:int, public:bool):

@@ -2,11 +2,12 @@ from datetime import datetime, timedelta
 from database import models
 from sqlalchemy import and_
 import pytz
-import redis
-from .common_logic import generate_random_string
+from jose import JWTError, jwt
 
-SECRET_KEY = ""
-ALGORITH = "HS256"
+
+SECRET_KEY = "*"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 class TimeCheck:
 
@@ -62,13 +63,34 @@ class TimeCheck:
 
 class Auth():
 
+    def __init__(self, session):
+        self.session = session
+
     #jwt tokens
-    def create_roken():
-        pass
+    def create_token(self, login : str):
+        expires = datetime.utcnow() + timedelta(days=1)
+        to_encode = {
+            "login" : login,
+            "expires" : expires.isoformat()
+        }
+        return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     
-    def verify_tokens():
-        pass
-    
+    def verify_token_and_return_user(self, token : str):
+
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("login")
+        if username is None:
+            raise ValueError()
+
+        user = self.session.query(models.User).filter_by(login=username).first()
+
+        if user:
+            return user
+        else:
+            raise ValueError
+
+
+
     # idea to try, token in redis
     """
     r = redis.Redis(host='localhost', port=6379, db=0)    
